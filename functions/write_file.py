@@ -1,4 +1,5 @@
 import os
+from google.genai import types
 
 def write_file(working_directory, file_path, content):
     try:
@@ -11,13 +12,31 @@ def write_file(working_directory, file_path, content):
         
         dir_path = os.path.dirname(full_file_path)
 
-    if dir_path and not os.path.exists(dir_path):
-        os.makedirs(dir_path, exist_ok=True)
-            
-        with open(full_file_path, "w") as f:
-            f.write(content)
-            
-        return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
+        if dir_path and not os.path.exists(dir_path):
+            os.makedirs(dir_path, exist_ok=True)
+                
+            with open(full_file_path, "w") as f:
+                f.write(content)
+                
+            return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
         
     except Exception as e:
         raise Exception(f"Error: {e}")
+    
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="Writes or overwrite files",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="The path to file to be overwritten or created, relative to the working directory.",
+            ),
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="The content to be filled in or overwritten into file"
+            )
+        },
+    ),
+)
